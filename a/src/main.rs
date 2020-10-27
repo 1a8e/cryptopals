@@ -1,6 +1,6 @@
 extern crate base64;
 
-// use std::str;
+use std::str;
 use std::u8;
 
 // static ENGLISH_LETTER_FREQUENCIES: [[f32; 2]; 26] = [
@@ -70,20 +70,23 @@ pub fn three() {
         let k_vec = vec![k; c_len];
         let xor_result = exclusive_or(&c_bytes, &k_vec);
         println!("{:?}", score_p_text(&xor_result));
-        // let res = str::from_utf8(&xor_result);
-        // match res {
-        //     Ok(v) => println!("{:?}", score_p_text(&v)),
-        //     Err(e) => println!("Unable to decode xor result: {}", e),
-        // };
+        let res = str::from_utf8(&xor_result);
+        match res {
+            Ok(v) => println!("{:?}", v),
+            Err(e) => println!("Unable to decode xor result: {}", e),
+        };
     }
 }
 
 pub fn score_p_text(p_text_bytes: &Vec<u8>) -> Vec<f32> {
     let len_p_text = p_text_bytes.len();
     let mut count_vec = vec![0; 26];
-    let base = 'a' as u8;
+    let base = 'a' as i8;
     for b in p_text_bytes {
-        count_vec[(b - base) as usize] += 1;
+        let idx = *b as i8 - base;
+        if 0 <= idx && idx <= 25 {
+            count_vec[idx as usize] += 1;
+        }
     };
     let mut frequency_vec: Vec<f32> = Vec::new();
     for count in count_vec {
